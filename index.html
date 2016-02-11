@@ -2,6 +2,11 @@
   <body>
     <input id='file-upload' type="file" accept="image/*capture=camera">
     <button id='upload-button'>Upload</button>
+    <br><br>
+    <div class='preview-container' style='max-width: 450px; overflow: hidden;'>
+      <img style='display: none; width: 100%' id='preview'>
+      <video controls style='display: none; width: 100%' id='preview'></video>
+    </div>
     <div id='status'></div>
     <div id='upload-time'></div>
     <h1>Files</h1>
@@ -29,13 +34,39 @@
       getContents(bucket);
 
       var bucket = new AWS.S3({params: {Bucket: 'html-camera-test'}});
-      var fileUpload = $('#file-upload')[0];
+      var fileUpload = $('#file-upload');
       var button = $('#upload-button');
       var uploadTime = $('#upload-time');
       var statusText = $('#status');
 
+      fileUpload.on('change', function() {
+        var file = fileUpload[0].files[0]
+        $('img#preview').hide();
+        $('video#preview').hide();
+        if (file.type.indexOf('image') > -1) {
+          reader = new FileReader();
+          preview = $('img#preview')[0]
+          preview.title = file.name;
+          reader.onload = function (event) {
+            preview.src = event.target.result;
+            $('img#preview').show()
+          }
+          reader.readAsDataURL(file);
+        }
+        else if (file.type.indexOf('video') > -1) {
+          reader = new FileReader();
+          preview = $('video#preview')[0]
+          preview.title = file.name;
+          reader.onload = function (event) {
+            preview.src = event.target.result;
+            $('video#preview').show()
+          }
+          reader.readAsDataURL(file);
+        }
+      });
+
       button.click(function () {
-        var file = fileUpload.files[0];
+        var file = fileUpload[0].files[0];
         if (file) {
           statusText.html('Uploading...');
           var start = Date.now();
