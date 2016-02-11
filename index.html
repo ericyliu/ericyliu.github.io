@@ -2,6 +2,7 @@
   <body>
     <input id='file-upload' type="file" accept="image/*capture=camera">
     <button id='upload-button'>Upload</button>
+    <div id='status'></div>
     <div id='upload-time'></div>
     <h1>Files</h1>
     <ul class='files'></ul>
@@ -31,16 +32,20 @@
       var fileUpload = $('#file-upload')[0];
       var button = $('#upload-button');
       var uploadTime = $('#upload-time');
+      var statusText = $('#status');
 
       button.click(function () {
-        var start = Date.now();
+        statusText.html('Uploading...');
         var file = fileUpload.files[0];
         if (file) {
+          statusText.html('Uploading...');
+          var start = Date.now();
           var params = {Key: file.name, ContentType: file.type, Body: file};
           bucket.upload(params, function (err, data) {
             if (err) { alert(err); }
             else {
               var finish = Date.now();
+              statusText.html('Finished Uploading');
               uploadTime.html('Upload time took: ' + ((finish - start)/1000) + 's');
               getContents(bucket);
             }
