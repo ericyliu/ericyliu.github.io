@@ -1,18 +1,53 @@
 <html>
   <body>
-    <input type="file" accept="image/*capture=camera">
-    <div class='files'></div>
+    <input id='file-upload' type="file" accept="image/*capture=camera">
+    <button id='upload-button'>Upload</button>
+    <div id='upload-time'></div>
+    <h1>Files</h1>
+    <ul class='files'></ul>
+    <script src='https://code.jquery.com/jquery-2.2.0.min.js'></script>
     <script src='aws-sdk.min.js'></script>
     <script>
       AWS.config.update({accessKeyId: 'AKIAJF4VELC656YEJXSA', secretAccessKey: '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'});
-      AWS.config.region = 'us-west-1';
-      new AWS.S3().listObjects({Bucket: 'html-camera-test'}, function(error, data) {
-        if (error) {
-          console.log(error); // an error occurred
-        } else {
-          console.log(data); // request succeeded
+      AWS.config.region = 'us-west-2';
+      var bucket = new AWS.S3({params: {Bucket: 'html-camera-test'}});
+
+      var getContents = function (s3bucket) {
+        s3bucket.listObjects(function(error, data) {
+          if (error) {
+            alert(error); // an error occurred
+          } else {
+            for (i=0; i<data.Contents.length; i++) {
+              $('.files').empty();
+              $('.files').append('<li>' + data.Contents[i].Key + '</li>')
+            }
+          }
+        });
+      }
+
+      getContents(bucket);
+
+      var bucket = new AWS.S3({params: {Bucket: 'html-camera-test'}});
+      var fileUpload = $('#file-upload')[0];
+      var button = $('#upload-button');
+      var uploadTime = $('#upload-time');
+
+      button.click(function () {
+        var start = Date.now();
+        var file = fileUpload.files[0];
+        if (file) {
+          var params = {Key: file.name, ContentType: file.type, Body: file};
+          bucket.upload(params, function (err, data) {
+            if (err) { alert(err); }
+            else {
+              var finish = Date.now();
+              uploadTime.html('Upload time took: ' + ((finish - start)/1000) + 's');
+              getContents(bucket);
+            }
+          });
         }
       });
+
     </script>
   </body>
 </html>
