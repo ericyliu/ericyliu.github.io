@@ -1,5 +1,18 @@
 <html>
   <body>
     <input type="file" accept="image/*capture=camera">
+    <div class='files'></div>
+    <script src='aws-sdk.min.js'></script>
+    <script>
+      AWS.config.update({accessKeyId: 'AKIAJF4VELC656YEJXSA', secretAccessKey: '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'});
+      AWS.config.region = 'us-west-1';
+      new AWS.S3().listObjects({Bucket: 'html-camera-test'}, function(error, data) {
+        if (error) {
+          console.log(error); // an error occurred
+        } else {
+          console.log(data); // request succeeded
+        }
+      });
+    </script>
   </body>
 </html>
