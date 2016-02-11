@@ -35,7 +35,6 @@
       var statusText = $('#status');
 
       button.click(function () {
-        statusText.html('Uploading...');
         var file = fileUpload.files[0];
         if (file) {
           statusText.html('Uploading...');
@@ -50,6 +49,9 @@
               getContents(bucket);
             }
           });
+        }
+        else {
+          statusText.html('No file to upload');
         }
       });
 
