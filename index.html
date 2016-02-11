@@ -17,8 +17,8 @@
           if (error) {
             alert(error); // an error occurred
           } else {
+            $('.files').empty();
             for (i=0; i<data.Contents.length; i++) {
-              $('.files').empty();
               $('.files').append('<li>' + data.Contents[i].Key + '</li>')
             }
           }
